@@ -127,7 +127,7 @@ If the ciphertext equals the desired value and `checker` is true, it calls a fun
   <div markdown=1>
     
 ```c
-void FUN_00101a5d(void)
+void encrypt_all_files(void)
 
 {
   char cVar1;
