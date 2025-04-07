@@ -196,7 +196,7 @@ void encrypt_all_files(void)
 
 Based on this, it seems that the ciphertext equaling whatever desired value the `decrypt` function is looking for and whatever sets `checker` to true are the conditions that activate the ransomware and encrypt everything. We just need to find what exactly those conditions are.
 
-Before we do that, I first take a look at what exactly the decrypt function is doing. It seems to go through rounds, uses some kind of constant, and does a lot of xor and bitwise operations. After some research, the ransomware seems to be using a modified version of the TEA/XTEA block cipher. Due to this new info, I retype and rename some variables for easier reading. 
+Before we do that, I first take a look at what exactly the decrypt function is doing. It seems to go through rounds, uses some kind of constant, and does a lot of xor and bitwise operations. After some research, the ransomware seems to be using a modified version of the [TEA/XTEA](https://en.wikipedia.org/wiki/XTEA) block cipher. Due to this new info, I retype and rename some variables for easier reading. 
 
 <details>
   <Summary>Click to expand decrypt()</Summary>
@@ -464,5 +464,224 @@ If we look at the decrypt function's logic, we can see that the passed in cipher
 
 So we pass in the ciphertext to `decrypt`, and then we can write the "ciphertext", which is now decrypted, to another file. 
 
+Let's write that solve program! I'll allow it to take the key as input since we're not entirely sure if `b4Ckd0Orb4Ckd0Or` is the key. Our progarm will go through all subdirectories finding any files that end with `.enc` and attempt to decrypt them. 
 
-![image](https://github.com/user-attachments/assets/a55c7887-f299-4d98-a333-eaa32cc592d8)
+<details>
+  <Summary>Click to expand backdoor_solve.c</Summary>
+  <div markdown=1>
+    
+```c
+// C program to basically import the decrypt function we found in Ghidra from notsuspicious.so and call it on the files we want to decrypt. decrypt modifies "ciphertext" variable in place, so once we call decrypt, we can just write "ciphertext" to the new files
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dlfcn.h>
+
+typedef int (*decrypt_func)(unsigned char *ciphertext, size_t ciphertext_size, const char *key);
+
+// Function to check if a file has a ".enc" extension
+int has_enc_extension(const char *filename) {
+    size_t len = strlen(filename);
+    return len > 4 && strcmp(filename + len - 4, ".enc") == 0;
+}
+
+// Function to decrypt files recursively in a directory
+void decrypt_files_in_dir(const char *dir_path, const char *key, decrypt_func decrypt) {
+    DIR *dir = opendir(dir_path);
+    struct dirent *entry;
+
+    if (dir == NULL) {
+        perror("Failed to open directory");
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        char full_path[1024];
+        snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, entry->d_name);
+
+        // Skip "." and ".." entries
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        struct stat statbuf;
+        if (stat(full_path, &statbuf) == -1) {
+            perror("Failed to stat file");
+            continue;
+        }
+
+        // If it's a directory, recurse into it
+        if (S_ISDIR(statbuf.st_mode)) {
+            decrypt_files_in_dir(full_path, key, decrypt);
+        }
+        // If it's a file and ends with ".enc", decrypt it
+        else if (S_ISREG(statbuf.st_mode) && has_enc_extension(entry->d_name)) {
+            printf("Decrypting: %s\n", full_path);
+
+            // Read the ciphertext
+            FILE *file = fopen(full_path, "rb");
+            if (!file) {
+                perror("Failed to open file");
+                continue;
+            }
+
+            fseek(file, 0, SEEK_END);
+            size_t file_size = ftell(file);
+            fseek(file, 0, SEEK_SET);
+
+            unsigned char *ciphertext = malloc(file_size);
+            if (!ciphertext) {
+                perror("Memory allocation failed");
+                fclose(file);
+                continue;
+            }
+
+            fread(ciphertext, 1, file_size, file);
+            fclose(file);
+
+            // Decrypt the file using the loaded function
+
+            // We know what parameters are passed in due to GDB (attached to spigot.jar process) and breakpoint at the decrypt function. We saw that RDI (first param) was the ciphertext, RSI (second param) was the length, and RDX (third param) was the key
+
+            int result = decrypt(ciphertext, file_size, key);
+            if (result == 0) {
+                printf("Successfully decrypted: %s\n", full_path);
+
+                // Generate a new file name for the decrypted content (e.g., remove ".enc" only)
+                char decrypted_file[1024];
+                strncpy(decrypted_file, full_path, sizeof(decrypted_file));
+                decrypted_file[sizeof(decrypted_file) - 1] = '\0';
+
+                size_t len = strlen(decrypted_file);
+                if (len >= 4 && strcmp(decrypted_file + len - 4, ".enc") == 0) {
+                    decrypted_file[len - 4] = '\0'; // Just strip ".enc", don't add anything
+                }
+
+                // Open the new file for writing (in binary mode)
+                FILE *dec_file = fopen(decrypted_file, "wb");
+                if (!dec_file) {
+                    perror("Failed to open decrypted file for writing");
+                    free(ciphertext);
+                    continue;
+                }
+
+                // Write the decrypted data to the new file (assuming it was done in-place)
+                fwrite(ciphertext, 1, file_size, dec_file);
+                fclose(dec_file);
+
+                printf("Decrypted file written to: %s\n", decrypted_file);
+            } 
+
+            // Really lazy way to just decrypt anyway. result not being 0 doesn't mean that the decryption failed
+            else {
+                printf("Successfully decrypted: %s\n", full_path);
+
+                // Generate a new file name for the decrypted content (e.g., remove ".enc" only)
+                char decrypted_file[1024];
+                strncpy(decrypted_file, full_path, sizeof(decrypted_file));
+                decrypted_file[sizeof(decrypted_file) - 1] = '\0';
+
+                size_t len = strlen(decrypted_file);
+                if (len >= 4 && strcmp(decrypted_file + len - 4, ".enc") == 0) {
+                    decrypted_file[len - 4] = '\0'; // Just strip ".enc", don't add anything
+                }
+
+                // Open the new file for writing (in binary mode)
+                FILE *dec_file = fopen(decrypted_file, "wb");
+                if (!dec_file) {
+                    perror("Failed to open decrypted file for writing");
+                    free(ciphertext);
+                    continue;
+                }
+
+                // Write the decrypted data to the new file (assuming it was done in-place)
+                fwrite(ciphertext, 1, file_size, dec_file);
+                fclose(dec_file);
+
+                printf("Decrypted file written to: %s\n", decrypted_file);
+            }
+
+            free(ciphertext);
+        }
+    }
+
+    closedir(dir);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <key>\n", argv[0]);
+        return 1;
+    }
+
+    const char *key = argv[1];
+
+    // Load the shared object at runtime
+    void *handle = dlopen("./notsuspicious.so", RTLD_LAZY);
+    if (!handle) {
+        fprintf(stderr, "Failed to load shared library: %s\n", dlerror());
+        return 1;
+    }
+
+    // Get the decrypt function from the shared object
+    decrypt_func decrypt = (decrypt_func)dlsym(handle, "decrypt");
+    if (!decrypt) {
+        fprintf(stderr, "Failed to find decrypt function: %s\n", dlerror());
+        dlclose(handle);
+        return 1;
+    }
+
+    // Start decrypting from the current directory
+    decrypt_files_in_dir(".", key, decrypt);
+
+    // Close the shared object when done
+    dlclose(handle);
+
+    return 0;
+}
+
+```
+  </div>
+</details>
+
+We run it with `./backdoor_solve b4Ckd0Orb4Ckd0Or`. Let's hope that key is correct. 
+
+![image](https://github.com/user-attachments/assets/3721eb5c-1e72-4b5e-9285-9371aead9773)
+
+It seems to have worked?
+
+![image](https://github.com/user-attachments/assets/b4d901ac-123a-4a5e-926a-34204713593f)
+
+We seem to have decrypted the files
+
+![image](https://github.com/user-attachments/assets/8bfa2d3e-9a96-4a0b-9dc8-58a3d5c3f64a)
+
+Now we just have to find the flag. There's many ways to do this. You could use the Python [Anvil](https://github.com/Intergalactyc/anvil-new/tree/master) library, or used [NPTExplorer](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-tools/1262665-nbtexplorer-nbt-editor-for-windows-and-mac). Or, if you have Minecraft, you can just pop the world into minecraft. 
+
+I just copy and pasted the `world` directory into my Windows Minecraft `saves` directory
+
+![image](https://github.com/user-attachments/assets/67e0de9a-468c-46b0-969d-09db341fd6a2)
+
+Now, we can load up Minecraft Java edition and look at the world. Where exactly is the flag though? 
+
+Well, looking through some of the data, we can find some playerdata that shows some player info of this challenge's creator, Flocto
+
+![image](https://github.com/user-attachments/assets/64e89b5a-c415-447b-afb3-d7d028d4edca)
+
+So we know his user ID. That means we can go to the `world/playerdata` directory and find where Flocto is in the game world. We can view this using [NPTExplorer](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-tools/1262665-nbtexplorer-nbt-editor-for-windows-and-mac). 
+
+![image](https://github.com/user-attachments/assets/d8f85a6c-559c-4021-ba41-c585d9eff119)
+
+So now we know where he is! Let's go there in the game world. It's a Survival world, so I activated cheats by opening to LAN and just teleported to -1000, 114, -1000, or at least as close as I could get. There's a sand tower that we have to get to the top of
+
+![image](https://github.com/user-attachments/assets/94633f95-1c4a-49f7-871c-2df38a4d251d)
+
+Once there, we get our flag!
+
+![image](https://github.com/user-attachments/assets/8fa7adf1-8b38-4e4e-87e5-c390b0829b1e)
+
+`gigem{i_also_wanted_to_play_hypixel_too_thanks}` is the flag, and with that, we have finished this challenge!
