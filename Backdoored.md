@@ -39,6 +39,7 @@ We can run `unzip` on this `.jar` file to get the `notsuspicious.so` file on its
 Let's pop this into Ghidra
 
 After Ghidra does its analysis, we can see a lot of the same functions we saw in the `.jar` file. This is likely the underlying code for them. We can also see some functions that based on the names, seem to be used to specifically encrypt the Minecraft region and level files, `encrypt_level_dat` and `encrypt_region_files`. 
+
 ![image](https://github.com/user-attachments/assets/65f7ed5a-e903-4d85-9a70-93a4e0a9ffdd)
 
 Let's look at the `decrypt` function first and try to rename some variables
@@ -116,6 +117,7 @@ int decrypt(EVP_PKEY_CTX *ctx,uchar *out,size_t *outlen,uchar *in,size_t inlen)
 </details>
 
 Right at the beginning of this function we find an interesting check:
+
 ![image](https://github.com/user-attachments/assets/9176371e-0627-4ca2-ba0b-dd6b9d3b58f8)
 
 It seems to be checking if the contents of `ctx`, which from the rest of the function we can pretty confidently deduce to be the ciphertext that we want to decrypt, is equal to a certain value. It also is checking if some value, `DAT_00105151` is true. I'll rename `DAT_00105151` to `checker`. 
