@@ -38,7 +38,7 @@ We can run `unzip` on this `.jar` file to get the `notsuspicious.so` file on its
 
 Let's pop this into Ghidra
 
-After Ghidra does its analysis, we can see a lot of the same functions we saw in the `.jar` file. This is likely the underlying code for them. We can also see some functions that based on the names, seem to be used to specifically encrypt the Minecraft region and level files
+After Ghidra does its analysis, we can see a lot of the same functions we saw in the `.jar` file. This is likely the underlying code for them. We can also see some functions that based on the names, seem to be used to specifically encrypt the Minecraft region and level files, `encrypt_level_dat` and `encrypt_region_files`. 
 ![image](https://github.com/user-attachments/assets/65f7ed5a-e903-4d85-9a70-93a4e0a9ffdd)
 
 Let's look at the `decrypt` function first and try to rename some variables
