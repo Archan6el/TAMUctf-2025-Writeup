@@ -671,7 +671,7 @@ I just copy and pasted the `world` directory into my Windows Minecraft `saves` d
 
 Now, we can load up Minecraft Java edition and look at the world. Where exactly is the flag though? 
 
-Well, looking through some of the data, we can find some playerdata that shows some player info of this challenge's creator, Flocto
+Well, looking through some of the data, we can find the usercache that shows some player info on this challenge's creator, Flocto
 
 ![image](https://github.com/user-attachments/assets/64e89b5a-c415-447b-afb3-d7d028d4edca)
 
