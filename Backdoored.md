@@ -122,7 +122,7 @@ Right at the beginning of this function we find an interesting check:
 
 It seems to be checking if the contents of `ctx`, which from the rest of the function we can pretty confidently deduce to be the ciphertext that we want to decrypt, is equal to a certain value. It also is checking if some value, `DAT_00105151` is true. I'll rename `DAT_00105151` to `checker`. 
 
-If the ciphertext equals the desired value and `checker` is true, it calls a function `FUN_00101a5d`. Looking at that function, we can see that it's the function responsible for encrypting all the important files in the Minecraft server using the `encrypt_level_dat` and `encrypt_region_files` functions that we saw from before. I'll rename the function to `encrypt_all_files`
+If the ciphertext equals the desired value and `checker` is true, it calls a function `FUN_00101a5d`. Looking at that function, we can see that it's responsible for encrypting all the important files in the Minecraft server using the `encrypt_level_dat` and `encrypt_region_files` functions that we saw from before. I'll rename the function to `encrypt_all_files`
 
 <details>
   <Summary>Click to expand encrypt_all_files()</Summary>
