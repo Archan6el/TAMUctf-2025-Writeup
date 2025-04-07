@@ -416,6 +416,8 @@ But we can use gdb to be 100% sure.
 
 We can run the server with `java -Xms1G -Xmx2G -jar spigot-1.21.4.jar`
 
+![image](https://github.com/user-attachments/assets/a8a802b7-fd96-4d49-9902-4be1cf96f9a8)
+
 Now we need to attach `gdb` to this process. Run `ps aux | grep spigot` to find the process ID of the Spigot server
 
 ![image](https://github.com/user-attachments/assets/80f747ed-9bd8-440d-97a9-a28318c63b17)
