@@ -655,13 +655,11 @@ int main(int argc, char *argv[]) {
 
 We run it with `./backdoor_solve b4Ckd0Orb4Ckd0Or`. Let's hope that key is correct. 
 
-![image](https://github.com/user-attachments/assets/3721eb5c-1e72-4b5e-9285-9371aead9773)
+![image](https://github.com/user-attachments/assets/b4d901ac-123a-4a5e-926a-34204713593f)
 
 It seems to have worked?
 
-![image](https://github.com/user-attachments/assets/b4d901ac-123a-4a5e-926a-34204713593f)
-
-We seem to have decrypted the files
+It appears we have decrypted the files
 
 ![image](https://github.com/user-attachments/assets/8bfa2d3e-9a96-4a0b-9dc8-58a3d5c3f64a)
 
