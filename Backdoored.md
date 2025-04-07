@@ -4,7 +4,7 @@ We are told that the user's Spigot Minecraft server files have been encrypted. E
 
 ![image](https://github.com/user-attachments/assets/0a06d530-fdfc-40d9-8332-37ea86a3806f)
 
-So immediately we notice a `RANSOM_NOTE.txt`. Taking a look at `world`, we can see that all the region files and the `level.dat` file have been encrypted as well
+So immediately we notice a `RANSOM_NOTE.txt`, meaning that the server was likely hit with some kind of ransomware. Taking a look at `world`, we can see that all the region files and the `level.dat` file have been encrypted
 
 ![image](https://github.com/user-attachments/assets/b156f25d-3c35-4e16-8aad-16af10ad3767)
 
