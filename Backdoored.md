@@ -455,7 +455,7 @@ For x86-64 architectures, `rdi` is the first parameter, `rsi` is the second para
 
 ![image](https://github.com/user-attachments/assets/18af55d1-dded-4732-a674-3d46a7dddf79)
 
-It seems that the ciphertext was the first parameter (`rdi`), the length of the ciphertext, which is 4, was the second parameter (`rsi`), and the key is the third parameter (`rdx`). The rest seem to be repeats or extraneous data. 
+It seems that the ciphertext, "test", was the first parameter (`rdi`), the length of the ciphertext, which is 4, was the second parameter (`rsi`), and the key is the third parameter (`rdx`). The rest seem to be repeats or extraneous data. 
 
 From this, we can pretty confidently say that `decrypt` takes 3 parameters, specifically to call `decrypt`, we would do `decrypt(ciphertext, ciphertext_length, key`. 
 
