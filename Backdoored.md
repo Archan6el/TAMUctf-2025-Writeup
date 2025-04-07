@@ -274,7 +274,7 @@ int decrypt(uint *ctx,uchar *out,size_t *outlen,uchar *in,size_t inlen)
 Well I mean, we do have the `notsuspicious.so` file to our disposal, so we could just use it to decrypt all the encrypted files using this `decrypt` function right? While that is true, we don't know one important thing. TEA/XTEA implementations usually require a 16-byte key, and it seems like this ransomware requires it too, as evidenced by these lines back in the `.jar` file
 ![image](https://github.com/user-attachments/assets/a69716fc-4217-4ee7-81e7-9f38039526ea)
 
-So what even is that key? Well, it might be tied to those 2 conditions we found earlier that activates the `encrypt_all_files()` function, and as we keep analyzing, we'll find that it's specifically the `checker` variable. 
+So what even is that key? Well, it might be tied to those 2 conditions we found earlier that activates the `encrypt_all_files()` function, and as we keep analyzing, we'll find that it's specifically tied to the `checker` variable. 
 
 While looking at the other functions we can find in the `.so`, I find something pretty odd in the `base64_encode` function. 
 
