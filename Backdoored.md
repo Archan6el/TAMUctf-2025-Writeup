@@ -272,7 +272,7 @@ int decrypt(uint *ctx,uchar *out,size_t *outlen,uchar *in,size_t inlen)
 Well I mean, we do have the `notsuspicious.so` file to our disposal, so we could just use it to decrypt all the encrypted files using this `decrypt` function right? While that is true, we don't know one important thing. TEA/XTEA implementations usually require a 16-byte key, and it seems like this ransomware requires it too, as evidenced by these lines back in the `.jar` file
 ![image](https://github.com/user-attachments/assets/a69716fc-4217-4ee7-81e7-9f38039526ea)
 
-So what even is that key? Well, it might be tied to those 2 conditions we found earlier that activates the `encrypt_all_files()` function, specifically the `checker` variable. 
+So what even is that key? Well, it might be tied to those 2 conditions we found earlier that activates the `encrypt_all_files()` function, and as we keep analyzing, we'll find that it's specifically the `checker` variable. 
 
 While looking at the other functions we can find in the `.so`, I find something pretty odd in the `base64_encode` function. 
 
@@ -400,7 +400,7 @@ for i in range(8):
 Running this gets us:
 ![image](https://github.com/user-attachments/assets/2e03bf6d-5a2b-4a5b-a7d4-888b4969aa1f)
 
-So the inputted text needs to be `b4Ckd0Or`. As you can tell by my `key` references in the name of the Python file and in its output, I started to realize that this might actually be the key for the modified TEA/XTEA algorithm in the `decrypt` function in order to decrypt all the encrypted Minecraft files. This is 8 bytes though, and the key needs to be 16 bytes. Perhaps the key is `b4Ckd0Orb4Ckd0Or`? Only one way to find out. 
+So the inputted text needs to be `b4Ckd0Or`. As you can tell by my `key` references in the name of the Python file and in its output, I started to realize that this might actually be the key for the modified TEA/XTEA algorithm in the `decrypt` function that we're looking for. This is 8 bytes though, and the key needs to be 16 bytes. Perhaps the key is `b4Ckd0Orb4Ckd0Or`? Only one way to find out. 
 
 We can write a C program to call the `decrypt` function from `notsuspicious.so`, but what even are the parameters we need to pass in?
 
@@ -408,3 +408,61 @@ I mean of course we have some hint of this in Ghidra:
 ![image](https://github.com/user-attachments/assets/b5b945c5-7689-4085-a6d0-e75cb790af3e)
 
 But we can use gdb to be 100% sure. 
+
+`notsuspiciousplugin-0.9.0.jar` is a plugin used by the Spigot server, so we can run the Spigot server normally and then set breakpoints. 
+
+We can run the server with `java -Xms1G -Xmx2G -jar spigot-1.21.4.jar`
+
+Now we need to attach `gdb` to this process. Run `ps aux | grep spigot` to find the process ID of the Spigot server
+
+![image](https://github.com/user-attachments/assets/80f747ed-9bd8-440d-97a9-a28318c63b17)
+
+So we find that the ID is `810`. We can attach gdb to this process with `gdb -p 810`
+
+Now that gdb is attached, we can set the breakpoint. We'll set it at `decrypt`, since that's the function that we want to find the parameters too
+
+![image](https://github.com/user-attachments/assets/5cf669bd-7dde-4f07-8603-422a3fd6e209)
+
+Now how do we even go about calling this function? 
+
+Looking back at `notsuspiciousplugin-0.9.0.jar`, in `plugin.yml`, we can find how to call decrypt
+
+![image](https://github.com/user-attachments/assets/955799fe-708c-4902-a1b9-7664ed17918f)
+
+So the syntax to call decrypt on the Minecraft server is `dec <ciphertext> <key>`
+
+Also looking at the `DecryptCommand` function in the `.jar`, we see that our ciphertext has to be in hex
+
+![image](https://github.com/user-attachments/assets/2846081d-d3b0-4579-8573-28646e5f4cd8)
+
+For our ciphertext, I'll use `74657374`, which is `test` in hex. For the key I'll use the key, `testkey`
+
+![image](https://github.com/user-attachments/assets/dcfa2bb7-5a0e-46e6-aa91-2d8fda7fa3c9)
+
+Alright nice, we hit our breakpoint. 
+
+Let's take a look at our registers to see what the parameters are
+
+![image](https://github.com/user-attachments/assets/e6d8dd1d-983e-4eb4-aedf-5c8bbbe758b2)
+
+
+For x86-64 architectures, `rdi` is the first parameter, `rsi` is the second parameter, `rdx` is the third parameter, `rcx` is the fourth parameter, and so on and so forth. Well let's look at what we have here
+
+![image](https://github.com/user-attachments/assets/18af55d1-dded-4732-a674-3d46a7dddf79)
+
+It seems that the ciphertext was the first parameter (`rdi`), the length of the ciphertext, which is 4, was the second parameter (`rsi`), and the key is the third parameter (`rdx`). The rest seem to be repeats or extraneous data. 
+
+From this, we can pretty confidently say that `decrypt` takes 3 parameters, specifically to call `decrypt`, we would do `decrypt(ciphertext, ciphertext_length, key`. 
+
+We can now write our C program to decrypt all the encrypted files!
+
+Essentially what we need to do is to "import" the decrypt function from `notsuspicious.so` and call it on all the encrypted files. 
+
+If we look at the decrypt function's logic, we can see that the passed in ciphertext, or `ctx` gets modified / decrypted in place
+
+![image](https://github.com/user-attachments/assets/125f53b0-5afd-4902-b908-07d71e5bbe7c)
+
+So we pass in the ciphertext to `decrypt`, and then we can write the "ciphertext", which is now decrypted, to another file. 
+
+
+![image](https://github.com/user-attachments/assets/a55c7887-f299-4d98-a333-eaa32cc592d8)
