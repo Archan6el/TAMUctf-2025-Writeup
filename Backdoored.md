@@ -469,7 +469,7 @@ If we look at the decrypt function's logic, we can see that the passed in cipher
 
 So we pass in the ciphertext to `decrypt`, and then we can write the "ciphertext", which is now decrypted, to another file. 
 
-Let's write that solve program! I'll allow it to take the key as input since we're not entirely sure if `b4Ckd0Orb4Ckd0Or` is the key. Our progarm will go through all subdirectories finding any files that end with `.enc` and attempt to decrypt them. 
+Let's write that solve program! I'll allow it to take the key as input since we're not entirely sure if `b4Ckd0Orb4Ckd0Or` is the key. Our program will go through all subdirectories finding any files that end with `.enc` and attempt to decrypt them. 
 
 <details>
   <Summary>Click to expand backdoor_solve.c</Summary>
