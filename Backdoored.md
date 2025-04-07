@@ -424,7 +424,7 @@ Now we need to attach `gdb` to this process. Run `ps aux | grep spigot` to find 
 
 So we find that the ID is `810`. We can attach gdb to this process with `gdb -p 810`
 
-Now that gdb is attached, we can set the breakpoint. We'll set it at `decrypt`, since that's the function that we want to find the parameters too
+Now that gdb is attached, we can set the breakpoint. We'll set it at `decrypt`, since that's the function that we want to find the parameters for
 
 ![image](https://github.com/user-attachments/assets/5cf669bd-7dde-4f07-8603-422a3fd6e209)
 
