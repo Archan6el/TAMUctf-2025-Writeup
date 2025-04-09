@@ -385,7 +385,7 @@ import base64
 target = 0x51e02052f115e3b
 
 # Convert the target value into a list of bytes
-target_bytes = [(target >> (8 * i)) & 0xFF for i in range(8)]
+target_bytes = list(target.to_bytes(8, byteorder='little'))
 
 # Start with empty key
 key = ''
