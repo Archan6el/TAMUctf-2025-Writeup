@@ -45,7 +45,7 @@ After Ghidra does its analysis, we can see a lot of the same functions we saw in
 Let's look at the `decrypt` function first and try to rename some variables
 
 <details>
-  <Summary>Click to expand decrypt()</Summary>
+  <Summary><i><ins>Click to expand decrypt()</ins></i></Summary>
   <div markdown=1>
     
 ```c
@@ -116,6 +116,8 @@ int decrypt(EVP_PKEY_CTX *ctx,uchar *out,size_t *outlen,uchar *in,size_t inlen)
   </div>
 </details>
 
+<br>
+
 Right at the beginning of this function we find an interesting check:
 
 ![image](https://github.com/user-attachments/assets/9176371e-0627-4ca2-ba0b-dd6b9d3b58f8)
@@ -125,7 +127,7 @@ It seems to be checking if the contents of `ctx`, which from the rest of the fun
 If the ciphertext equals the desired value and `checker` is true, it calls a function `FUN_00101a5d`. Looking at that function, we can see that it's responsible for encrypting all the important files in the Minecraft server using the `encrypt_level_dat` and `encrypt_region_files` functions that we saw from before. I'll rename the function to `encrypt_all_files`
 
 <details>
-  <Summary>Click to expand encrypt_all_files()</Summary>
+  <Summary><i><ins>Click to expand encrypt_all_files()</ins></i></Summary>
   <div markdown=1>
     
 ```c
@@ -195,13 +197,14 @@ void encrypt_all_files(void)
 ```
   </div>
 </details>
+<br>
 
 Based on this, it seems that the ciphertext equaling whatever desired value the `decrypt` function is looking for and whatever sets `checker` to true are the conditions that activate the ransomware and encrypt everything. We just need to find what exactly those conditions are.
 
 Before we do that, I first take a look at what exactly the decrypt function is doing. It seems to go through rounds, uses some kind of constant, and does a lot of xor and bitwise operations. After some research, the ransomware seems to be using a modified version of the [TEA/XTEA](https://en.wikipedia.org/wiki/XTEA) block cipher. Due to this new info, I retype and rename some variables for easier reading. 
 
 <details>
-  <Summary>Click to expand decrypt()</Summary>
+  <Summary><i><ins>Click to expand decrypt()</ins></i></Summary>
   <div markdown=1>
 
 ```c
@@ -270,6 +273,7 @@ int decrypt(uint *ctx,uchar *out,size_t *outlen,uchar *in,size_t inlen)
 ```
   </div>
 </details>
+<br>
 
 Well I mean, we do have the `notsuspicious.so` file to our disposal, so we could just use it to decrypt all the encrypted files using this `decrypt` function right? While that is true, we don't know one important thing. TEA/XTEA implementations usually require a 16-byte key, and it seems like this ransomware requires it too, as evidenced by these lines back in the `.jar` file
 ![image](https://github.com/user-attachments/assets/a69716fc-4217-4ee7-81e7-9f38039526ea)
@@ -279,7 +283,7 @@ So what even is that key? Well, it might be tied to those 2 conditions we found 
 While looking at the other functions we can find in the `.so`, I find something pretty odd in the `base64_encode` function. 
 
 <details>
-  <Summary>Click to expand base64_encode()</Summary>
+  <Summary><i><ins>Click to expand base64_encode()</ins></i></Summary>
   <div markdown=1>
     
 ```c  
@@ -357,6 +361,7 @@ void base64_encode(byte *param_1,int param_2,char *param_3)
 ```
   </div>
 </details>
+<br>
 
 There's some sort of conditional check here that sets `checker` to true:
 ![image](https://github.com/user-attachments/assets/21aecc81-49f9-4408-895f-ad532f2b954e)
@@ -366,7 +371,7 @@ Analyzing the rest of the function, it seems that what this check is doing is ch
 We can write a pretty simple Python script to actually brute force byte by byte what this inputted text needs to be:
 
 <details>
-  <Summary>Click to expand get_key.py</Summary>
+  <Summary><i><ins>Click to expand get_key.py</ins></i></Summary>
   <div markdown=1>
 
 ```Python  
@@ -398,6 +403,7 @@ for i in range(8):
 ```
   </div>
 </details>
+<br>
 
 Running this gets us:
 
@@ -472,7 +478,7 @@ So we pass in the ciphertext to `decrypt`, and then we can write the "ciphertext
 Let's write that solve program! I'll allow it to take the key as input since we're not entirely sure if `b4Ckd0Orb4Ckd0Or` is the key. Our program will go through all subdirectories finding any files that end with `.enc` and attempt to decrypt them. 
 
 <details>
-  <Summary>Click to expand backdoor_solve.c</Summary>
+  <Summary><i><ins>Click to expand backdoor_solve.c</ins></i></Summary>
   <div markdown=1>
     
 ```c
@@ -652,6 +658,7 @@ int main(int argc, char *argv[]) {
 ```
   </div>
 </details>
+<br>
 
 We run it with `./backdoor_solve b4Ckd0Orb4Ckd0Or`. Let's hope that key is correct. 
 
