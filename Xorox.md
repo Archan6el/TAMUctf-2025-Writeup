@@ -101,11 +101,11 @@ We just need the values of `DAT_00104020` and `DAT_00102060` and then we can com
 
 We can find that really easily in Ghidra. 
 
-`DAT_00104020` is:
+`DAT_00104020` is (this is a partial snippet):
 
 ![image](https://github.com/user-attachments/assets/ea87d814-5f2e-4db4-8cc2-c45c3f3cd508)
 
-`_DAT_00102060` is:
+`_DAT_00102060` is (this is a partial snippet):
 
 ![image](https://github.com/user-attachments/assets/600de471-6a59-4a9e-92d5-239edca0a62c)
 
