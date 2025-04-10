@@ -466,7 +466,7 @@ from pwn import *
 import string
 
 # Flag starts with the known prefix
-flag = ""  # Start with the known prefix
+flag = "gigem{"  # Start with the known prefix
 chars = string.printable.strip()  # All printable characters
 wdid_script = "WDID.py"
 wdz_file = "flag.wdz"
