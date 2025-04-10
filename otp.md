@@ -317,4 +317,4 @@ Running this gets us:
 
 The flag is `gigem{if_you_did_that_manually_i_am_so_sorry_for_your_loss}`
 
-This challenge is complete!
+This challenge is now complete!
