@@ -141,7 +141,7 @@ Running this gets us:
 
 ![image](https://github.com/user-attachments/assets/64adda93-f6fc-4210-b89f-1952b604e00b)
 
-It looks just a tadbit malformed, seems like it should be `{v3ry_F45t_SIMD_x0r_w1th_2_keys}` instead of `{v3ry_F45t_SIMD_x0r?w1th_2_keys}`. Well, we can check with the binary. If we run it with the flag and it's correct, it should print "Yup"
+It looks just a tad bit malformed. It seems like it should be `{v3ry_F45t_SIMD_x0r_w1th_2_keys}` instead of `{v3ry_F45t_SIMD_x0r?w1th_2_keys}`. Well, good thing we can check with the binary. If we run it with the flag and it's correct, it should print "Yup"
 
 ![image](https://github.com/user-attachments/assets/08e6636c-28a5-43e0-9f68-07b8ef3789ac)
 
