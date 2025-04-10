@@ -98,7 +98,7 @@ We can use `frame <frame number>` to switch to a stack frame and inspect registe
 
 ![image](https://github.com/user-attachments/assets/f987d6df-d142-4c87-bd68-befd638f3f2c)
 
-Well, from the source code, we see that the name of the key variable is straight up just `key`. Let's try running `x/128bx key` to see if we get anything? We're trying to print 128 bytes of hex at the `key` variable. We do 128 bytes since in the source code, we see that the
+Well, from the source code, we see that the name of the key variable is straight up just `key`. Let's try running `x/128bx key` to see if we get anything. We're trying to print 128 bytes of hex at the `key` variable. We do 128 bytes since in the source code, we see that the
 char array variable is initalized with `char key[128]`
 
 We get:
