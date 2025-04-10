@@ -94,7 +94,7 @@ If we scroll all the way back, we see that `otp()` is called for the first time 
 
 So from frames 4-1003, new random keys are being generated and are being XOR'd with our flag. Thankfully, XOR is reversible, so we can reverse this process, but we need all those keys. 
 
-Well, we can use `frame <frame number>` to switch to a stack frame and inspect registers and variables on the stack. I switch to the most recent stack frame, which is frame 1003
+We can use `frame <frame number>` to switch to a stack frame and inspect registers and variables on the stack. I switch to the most recent stack frame, which is frame 1003
 
 ![image](https://github.com/user-attachments/assets/f987d6df-d142-4c87-bd68-befd638f3f2c)
 
