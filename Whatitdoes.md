@@ -7,7 +7,7 @@ We have the script `WDID.py`:
   <div markdown=1>
 
 ```python
-    import sys
+import sys
 import argparse
 
 class WaduzitdoProgram:
@@ -290,7 +290,7 @@ Of course, `flag.wdz` is what immediately interests me:
   <div markdown =1>
     
 ```text
-    *T:What's the flag? 
+*T:What's the flag? 
 A
 M:k
 YJ:1
