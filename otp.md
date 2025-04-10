@@ -82,7 +82,7 @@ We can do this pretty easily with `gdb <path to binary> <path to dump>`
 
 Alright, so how do we get the keys?
 
-Well, we can run `bt` to see all the function calls at the time of the crash. 
+Well, we can run `bt` to see all the previous function calls. 
 
 ![image](https://github.com/user-attachments/assets/57541dd4-a554-4306-be3b-d379f433b4a1)
 
