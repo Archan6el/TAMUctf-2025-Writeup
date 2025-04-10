@@ -2,7 +2,7 @@ This challenge was a pretty simple XOR rev challenge.
 
 We are given a binary, `xorox`
 
-Popping it into Ghidra and taking a look at the main function, it seems that the program expects the flag as input. The program loads in some variable `_DAT_00104020` and then takes everything past `gigem` from the flag and pass it to a function `transformation`, 
+Popping it into Ghidra and taking a look at the main function, it seems that the program expects the flag as input. The program loads in some variable `_DAT_00104020` and then takes everything past `gigem` from the flag and passes it to a function `transformation`, 
 along with some variable `_DAT_00102080`. If this function returns 1, the program prints "Yup". Otherwise, it prints "Nope"
 
 <details>
