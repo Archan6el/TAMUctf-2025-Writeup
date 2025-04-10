@@ -129,7 +129,7 @@ Now that we have a pretty good grasp of what's going on, we just need to go thro
 <div markdown=1>
   
 ```
-  # extract_keys.gdb
+# extract_keys.gdb
 
 # Set the frame number you want to start from
 set $frame = 1003
@@ -170,7 +170,7 @@ A bunch of output
 ...
 ...
 ...
-  Frame 10:
+Frame 10:
 #10 0x00000000004012a6 in otp (p=0x7ffe603d01d0 "\203U\263k\221\221\031\017\206\bz\350$q\240v\352wN\037\236\253\371\024\200\335LT\264/\232\001!S\271r\221\r1\303\020\277\246Kr(\225'p1\333N\005\334\353\327r\357\177\n\376\177", n=0x3b, depth=0x3e1) at /otp.c:27
 27	        otp(p, n, depth + 1);
 0x7ffe603a1840:	0x31	0xcf	0x0d	0x15	0xff	0xe0	0x28	0x54
