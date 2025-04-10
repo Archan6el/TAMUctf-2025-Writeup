@@ -119,7 +119,7 @@ If we run `x/128bx key` again, we get
 
 ![image](https://github.com/user-attachments/assets/5760417a-b5f4-400e-a53a-71d8f8294f25)
 
-Again, everything after the 59th byte seems to be mostly zero! It seems that our key is actually 59 bytes, and not 128. 
+Again, everything after the 59th byte (`0x1d`) seems to be mostly zero! It seems that our key is actually 59 bytes, and not 128. 
 
 Now that we have a pretty good grasp of what's going on, we just need to go through each stack frame starting from 1003 and going all the way back to 4 to get the keys, and XOR that with our encrypted flag. Instead of doing, `x/128bx key`, we'll instead do
 `x/59bx key` since we know the key is only 59 bytes long. We can automate getting those keys with a gdb script, like so:
