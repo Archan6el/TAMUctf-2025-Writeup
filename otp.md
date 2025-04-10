@@ -86,7 +86,7 @@ Well, we can run `bt` to see all the previous function calls.
 
 ![image](https://github.com/user-attachments/assets/57541dd4-a554-4306-be3b-d379f433b4a1)
 
-Alright, so we can see a whole lot of frames, 1003 in fact, and most of the function calls are calling `otp()`, which as we saw from the source code, is what's used to "encrypt" (it's just XOR'ing) the flag. 
+Alright, so we can see a whole lot of frames, 1003 in fact, and most of the function calls are calling `otp()`, which as we saw from the source code, is what's used to "encrypt" (it's just XOR'ing) the flag with the random keys. 
 
 If we scroll all the way back, we see that `otp()` is called for the first time during frame 4
 
