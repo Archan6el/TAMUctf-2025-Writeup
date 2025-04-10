@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 </div>
 </details>
 
-As we can see, it seems to generate random keys by using `/dev/urandom` and encrypts our flag by XOR'ing the bytes of the flag by the bytes of the key. This is done over and over again. Well, how do we get those keys? This is where the core dump comes into play.
+As we can see, it seems to generate random keys by using `/dev/urandom` and encrypts our flag by XOR'ing the bytes of the flag by the bytes of the key. This is done over and over again. How do we get those keys? This is where the core dump comes into play.
 
 We can run the `otp` binary with the core dump in order to examine the registers and the program execution from the dump. 
 
@@ -98,7 +98,7 @@ We can use `frame <frame number>` to switch to a stack frame and inspect registe
 
 ![image](https://github.com/user-attachments/assets/f987d6df-d142-4c87-bd68-befd638f3f2c)
 
-Well, from the source code, we see that the name of key variable is straight up just `key`. Let's try running `x/128bx key` to see if we get anything? We're trying to print 128 bytes of hex at the `key` variable. We do 128 bytes since in the source code, we see that the
+Well, from the source code, we see that the name of the key variable is straight up just `key`. Let's try running `x/128bx key` to see if we get anything? We're trying to print 128 bytes of hex at the `key` variable. We do 128 bytes since in the source code, we see that the
 char array variable is initalized with `char key[128]`
 
 We get:
