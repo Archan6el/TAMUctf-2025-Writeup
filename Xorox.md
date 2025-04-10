@@ -52,8 +52,7 @@ LAB_0010132c:
 </div>
 </details>
 
-Taking a look at the `transformation` function it seems to load in a new variable, `_DAT_00102060`, and performs some XOR logic with `param_1` and `param_2`, which we know to be everything after `gigem` in the flag and whatever `_DAT_00102080` is respectively. It also
-likely performs some XOR logic with whatever is in `_DAT_00104020` as well, which is probably `in_YMM7`
+Taking a look at the `transformation` function it seems to load in a new variable, `_DAT_00102060`, and performs some XOR logic with `param_1` and `param_2`, which we know to be everything after `gigem` in the flag and whatever `_DAT_00102080` is respectively. It also performs some XOR logic with whatever is in `in_YMM7` as well, which is probably `_DAT_00104020` which we saw earlier in the main function
 
 <details>
   <Summary><i><ins>Click to expand transformation</ins></i></Summary>
