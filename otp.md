@@ -1,4 +1,4 @@
-This challenge revolves around a C program that encrypts the file containing a flag based on changing keys, and a core dump that contains said keys. We have `encyrypted_flag.bin`, we just have to find a way to decrypt the flag. 
+This challenge revolves around a C program that encrypts the flag through XOR using random changing keys, and a core dump that contains said keys. We have `encyrypted_flag.bin` which contains the final encrypted flag output, we just have to find a way to decrypt it. 
 
 First of all, we are given the binary `otp` and its source code, `otp.c`:
 
