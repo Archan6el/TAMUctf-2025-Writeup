@@ -1,4 +1,4 @@
-This challenge revolves around an odd Python script that creates some interesting output. 
+This challenge revolves around an odd Python script that requires some interesting files as input. 
 
 We have the script `WDID.py`:
 
