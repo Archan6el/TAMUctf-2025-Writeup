@@ -71,7 +71,7 @@ only in ohio:
 
 After analyzing for a while, we realize that all this boils down to is just 4 different systems of equations each with 10 variables that we need to solve for. It's essentially just linear algebra
 
-`required_thoughts` contains the 4 sets of constant vectors for each of the 4 equations. In `brain.gyat`, `rot()` initalizes the coefficient matrix, and as it performs calculations using `think()`, it changes said coefficient matrix
+`required_thoughts` contains the 4 sets of constant vectors for each of the 4 systems of equations. In `brain.gyat`, `rot()` initalizes the coefficient matrix, and as it performs calculations using `think()`, it changes said coefficient matrix
 
 I edit the programs to be valid Python files by fixing the keywords, and create my own function in `brain.gyat` (now `brain.py` after editing it) called `reverse_think` that does the linear algebra calculations for us and gives us the answers. 
 Since there are 10 unknowns for 4 different systems of equations, we should end up with 40 total results (since there are 40 unknowns). These unknowns should make up the bytes of the flag. 
