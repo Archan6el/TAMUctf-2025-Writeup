@@ -670,7 +670,7 @@ It appears we have decrypted the files
 
 ![image](https://github.com/user-attachments/assets/8bfa2d3e-9a96-4a0b-9dc8-58a3d5c3f64a)
 
-Now we just have to find the flag. There's many ways to do this. You could use the Python [Anvil](https://github.com/Intergalactyc/anvil-new/tree/master) library, or used [NPTExplorer](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-tools/1262665-nbtexplorer-nbt-editor-for-windows-and-mac). Or, if you have Minecraft, you can just pop the world into minecraft. 
+Now we just have to find the flag. There's many ways to do this. You could use the Python [Anvil](https://github.com/Intergalactyc/anvil-new/tree/master) library, or use [NPTExplorer](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-tools/1262665-nbtexplorer-nbt-editor-for-windows-and-mac). Or, if you have Minecraft, you can just pop the world into minecraft. 
 
 I just copy and pasted the `world` directory into my Windows Minecraft `saves` directory
 
