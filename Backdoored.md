@@ -409,7 +409,7 @@ Running this gets us:
 
 ![image](https://github.com/user-attachments/assets/2e03bf6d-5a2b-4a5b-a7d4-888b4969aa1f)
 
-So the inputted text needs to be `b4Ckd0Or`. As you can tell by my `key` references in the name of the Python file and in its output, I started to realize that this might actually be the key for the modified TEA/XTEA algorithm in the `decrypt` function that we're looking for. This is 8 bytes though, and the key needs to be 16 bytes. Perhaps the key is `b4Ckd0Orb4Ckd0Or`? Only one way to find out. 
+So the inputted text needs to be `b4Ckd0Or`. As you can tell by my `key` references in the output, I started to realize that this might actually be the key for the modified TEA/XTEA algorithm in the `decrypt` function that we're looking for. This is 8 bytes though, and the key needs to be 16 bytes. Perhaps the key is `b4Ckd0Orb4Ckd0Or`? Only one way to find out. 
 
 We can write a C program to call the `decrypt` function from `notsuspicious.so`, but what even are the parameters we need to pass in?
 
