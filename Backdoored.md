@@ -708,6 +708,7 @@ def decrypt_files_in_dir(dir_path, key):
             with open(decrypted_file, "wb") as f:
                 f.write(data)
 
+            print(f"Successfully decrypted: {full_path}")
             print(f"Decrypted file written to: {decrypted_file}")
 
 if __name__ == "__main__":
