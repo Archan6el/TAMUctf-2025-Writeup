@@ -660,7 +660,71 @@ int main(int argc, char *argv[]) {
 </details>
 <br>
 
-We run it with `./backdoor_solve b4Ckd0Orb4Ckd0Or`. Let's hope that key is correct. 
+We can also just do this in Python which is way simpler
+
+<details>
+  <Summary><i><ins>Click to expand backdoor_solve.py</ins></i></Summary>
+  <div markdown=1>
+    
+```python
+import os
+import ctypes
+
+# Load the shared library
+lib = ctypes.CDLL("./notsuspicious.so")
+
+# Define the function signature
+# int decrypt(unsigned char *ciphertext, size_t ciphertext_size, const char *key)
+lib.decrypt.argtypes = [ctypes.POINTER(ctypes.c_ubyte), ctypes.c_size_t, ctypes.c_char_p]
+lib.decrypt.restype = ctypes.c_int
+
+# Check for ".enc" files
+def has_enc_extension(filename):
+    return filename.endswith(".enc")
+
+# Recursively decrypt files in a directory
+def decrypt_files_in_dir(dir_path, key):
+    for entry in os.listdir(dir_path):
+        full_path = os.path.join(dir_path, entry)
+
+        if os.path.isdir(full_path):
+            decrypt_files_in_dir(full_path, key)
+        elif os.path.isfile(full_path) and has_enc_extension(entry):
+            print(f"Decrypting: {full_path}")
+
+            # Read file contents
+            with open(full_path, "rb") as f:
+                data = bytearray(f.read())
+
+            # Convert to ctypes array
+            buf = (ctypes.c_ubyte * len(data)).from_buffer(data)
+
+            # Call the decrypt function
+            # We know what parameters are passed in due to GDB (attached to spigot.jar process) and breakpoint at the decrypt function. We saw that RDI (first param) was the ciphertext, RSI (second param) was the length, and RDX (third param) was the key
+            result = lib.decrypt(buf, len(data), key.encode())
+
+            # Write the decrypted content to a new file (strip ".enc")
+            decrypted_file = full_path[:-4]  # remove ".enc"
+            with open(decrypted_file, "wb") as f:
+                f.write(data)
+
+            print(f"Decrypted file written to: {decrypted_file}")
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 2:
+        # Key is b4Ckd0Orb4Ckd0Or
+        print(f"Usage: {sys.argv[0]} <key>")
+        sys.exit(1)
+
+    key = sys.argv[1]
+    decrypt_files_in_dir(".", key)
+```
+  </div>
+</details>
+<br>
+
+We run it with `./backdoor_solve b4Ckd0Orb4Ckd0Or` or `python3 backdoor_solve.py b4Ckd0Orb4Ckd0Or`. Let's hope that key is correct. 
 
 ![image](https://github.com/user-attachments/assets/b4d901ac-123a-4a5e-926a-34204713593f)
 
